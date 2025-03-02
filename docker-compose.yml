@@ -1,28 +1,26 @@
-version: '2'
+version: '3.7'
+
 services:
-  fe:
-    image: kammana/emp-fe-comp:1.0
-    container_name: emp-fe
+  Backend:
+    build: .
+    container_name: java-http
     ports:
-     - "4200:4200"
-    networks:
-      - javahome-app
-  mongodb:
-    container_name: mongodb
-    image: "mongo:latest"
-    networks:
-      - javahome-app
+      - "9090:9090"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: my-mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
     volumes:
-      - mongodb:/data/db
-  emp-api:
-    container_name: empapi
-    image: kammana/boot-api:5.0
-    ports:
-     - "8080:8080"
-    networks:
-      - javahome-app
+      - mysql_data:/var/lib/mysql
+
 volumes:
-  mongodb:
-networks:
-  javahome-app:
-    driver: bridge
+  mysql_data:
